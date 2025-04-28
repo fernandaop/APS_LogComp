@@ -1,7 +1,7 @@
 # APS_LogComp
 
-1. Introdução
-Essa é uma linguagem de programação criada como parte da APS de Log Comp feita por Fernanda Pereira.
+1. Introdução:
+  Essa é uma linguagem de programação criada como parte da APS de Log Comp feita por Fernanda Pereira.
 
 2. Características
 - Tipagem explícita (int, bool, string)

@@ -1,0 +1,3 @@
+section teste:
+    let nome: text := "Lúmina";
+    show("Olá, " ++ nome);

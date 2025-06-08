@@ -4,93 +4,105 @@
   Essa é uma linguagem de programação criada como parte da APS de Log Comp feita por Fernanda Pereira.
 
 2. Características
-- Tipagem explícita (int, bool, string)
-- Comandos de controle de fluxo: if, else, while
-- Operações aritméticas (+, -, *, /)
-- Operações relacionais (==, !=, <, >, <=, >=)
-- Impressão de valores com print
+- **Tipagem explícita** com valor padrão (`:=`)
+- **Loop com contador embutido** (`loop var in range`)
+- **Impressão reativa** com `watch`
+- **Decisão como expressão funcional** (`decide`)
+- **Blocos organizacionais nomeados** (`section`)
+- **Retornos intermediários fora de funções** (`yield`)
+- Impressão de saída com `show`
+- Tipos: `int`, `bool`, `text`
+- Booleanos com `yes` e `no`
 
 3. Gramática - EBNF
-```
-(* Programa: sequência de comandos *)
-program           = { statement } ;
+```ebnf
+(* Programa completo *)
+program              = { block } ;
+
+(* Blocos nomeados *)
+block                = ["section" identifier ":"] { statement } ;
 
 (* Comandos *)
-statement         = variable_declaration
-                  | assignment
-                  | if_statement
-                  | while_statement
-                  | print_statement ;
+statement            = variable_declaration
+                     | assignment
+                     | if_expression
+                     | loop_statement
+                     | watch_statement
+                     | yield_statement
+                     | print_statement
+                     | ";" ;
 
-(* Declaração de variáveis *)
-variable_declaration = "var" identifier ":" type "=" expression ";" ;
+(* Declaração de variáveis com valor padrão *)
+variable_declaration = "let" identifier ":" type ":=" expression ";" ;
 
 (* Atribuição *)
-assignment        = identifier "=" expression ";" ;
+assignment           = identifier "<-" expression ";" ;
 
-(* Condicional IF/ELSE *)
-if_statement      = "if" "(" condition ")" "{" { statement } "}" [ "else" "{" { statement } "}" ] ;
+(* Impressão padrão *)
+print_statement      = "show" "(" expression ")" ";" ;
 
-(* Laço WHILE *)
-while_statement   = "while" "(" condition ")" "{" { statement } "}" ;
+(* Impressão reativa *)
+watch_statement      = "watch" identifier ";" ;
 
-(* Impressão *)
-print_statement   = "print" "(" expression ")" ";" ;
+(* Condicional como expressão *)
+if_expression        = "decide" "(" condition "," expression_if_true "," expression_if_false ")" ;
 
-(* Expressões aritméticas *)
-expression        = term { ("+" | "-") term } ;
+(* Loop com contador implícito *)
+loop_statement       = "loop" identifier "in" "range" "(" expression "," expression ")" "{" { statement } "}" ;
 
-term              = factor { ("*" | "/") factor } ;
+(* Retorno intermediário de valor *)
+yield_statement      = "yield" expression ";" ;
 
-factor            = number
-                  | string
-                  | boolean
-                  | identifier
-                  | "(" expression ")" ;
+(* Expressões *)
+expression           = term { ("+" | "-" | "++") term } ;
 
-(* Condições booleanas *)
-condition         = expression comparison_operator expression ;
+term                 = factor { ("*" | "/" | "//") factor } ;
 
-comparison_operator = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+factor               = number | string | boolean | identifier | "(" expression ")" ;
 
-(* Tipos de variáveis *)
-type              = "int" | "bool" | "string" ;
+(* Condições *)
+condition            = expression comparison_operator expression ;
 
-(* Identificadores e valores *)
-identifier        = letter { letter | digit | "_" } ;
+comparison_operator  = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 
-number            = digit { digit } ;
+(* Tipos *)
+type                 = "int" | "bool" | "text" ;
 
-string            = '"' { character } '"' ;
+(* Valores e identificadores *)
+identifier           = letter { letter | digit | "_" } ;
 
-boolean           = "true" | "false" ;
+number               = digit { digit } ;
 
-(* Caracteres *)
-letter            = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z" ;
+string               = '"' { character } '"' ;
 
-digit             = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+boolean              = "yes" | "no" ;
 
-character         = letter | digit | symbol ;
+letter               = "a" | ... | "z" | "A" | ... | "Z" ;
 
-symbol            = "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ")" 
-                  | "-" | "_" | "+" | "=" | "{" | "}" | "[" | "]" | ":" | ";" 
-                  | "'" | "<" | ">" | "," | "." | "/" | "?" | "\\" | "|" ;
+digit                = "0" | ... | "9" ;
+
+character            = letter | digit | symbol ;
+
+symbol               = any printable ASCII symbol ;
 ```
 
 4. Exemplo de Código
 ```
-var x: int = 5;
-var y: int = 10;
-var texto: string = "Olá Mundo";
+section intro:
+    let nome: text := "Fernanda";
+    let pontos: int := 0;
 
-if (x < y) {
-    print(texto);
-} else {
-    print("Erro");
-}
+    show("Bem-vinda, " ++ nome);
 
-while (x < 10) {
-    x = x + 1;
-    print(x);
-}
+section contagem:
+    loop i in range(0, 3) {
+        show("Rodada: " ++ i);
+        pontos <- pontos + 10;
+        watch pontos;
+    }
+
+section decisao:
+    let status: text := decide(pontos >= 30, "Aprovada", "Reprovada");
+    yield status;
+
 ```

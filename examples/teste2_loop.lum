@@ -1,0 +1,4 @@
+section repeticao:
+    loop i in range(1, 4) {
+        show(i);
+    }

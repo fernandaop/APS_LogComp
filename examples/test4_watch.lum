@@ -1,0 +1,5 @@
+section observar:
+    let pontos: int := 15;
+    watch pontos;
+    pontos <- 20;
+    watch pontos;

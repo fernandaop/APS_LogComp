@@ -1,0 +1,5 @@
+section variaveis:
+    let a: int := 3;
+    let b: int := 7;
+    let c: int := a + b;
+    show(c);

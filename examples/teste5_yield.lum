@@ -1,0 +1,3 @@
+section resultado:
+    let resultado: int := 42;
+    yield resultado;

@@ -1,0 +1,5 @@
+section condicional:
+    let x: int := 5;
+    let y: int := 10;
+    let maior: int := decide(x > y, x, y);
+    show(maior);

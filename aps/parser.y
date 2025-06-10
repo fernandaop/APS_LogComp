@@ -1,4 +1,3 @@
-// parser.y
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,14 +17,14 @@ Node* root;
     Node* node;
 }
 
-%token <str> ID STRING
-%token <num> NUMBER
+%token <str> ID STRING BOOLEAN
+%token <num> NUMBER TYPE_INT TYPE_BOOL TYPE_TEXT
 %token LET LOOP IN RANGE SHOW WATCH DECIDE YIELD SECTION
-%token TYPE_INT TYPE_BOOL TYPE_TEXT
 %token ASSIGN_INIT ASSIGN CONCAT
-%token EQ NEQ LT LTE GT GTE DIV_INT BOOLEAN
+%token EQ NEQ LT LTE GT GTE DIV_INT
 
-%type <node> program blocks block statements statement expression term factor decide_expression type
+%type <node> program blocks block statements statement expression term factor decide_expression loop_statement
+%type <num> type
 
 %start program
 
@@ -51,7 +50,7 @@ statements:
     ;
 
 statement:
-    LET ID ':' type ASSIGN_INIT expression ';' { $$ = create_let_node($2, $6); }
+    LET ID ':' type ASSIGN_INIT expression ';' { $$ = create_let_node($2, $4, $6); }
     | ID ASSIGN expression ';'                 { $$ = create_assign_node($1, $3); }
     | SHOW '(' expression ')' ';'              { $$ = create_show_node($3); }
     | WATCH ID ';'                             { $$ = create_watch_node($2); }
@@ -73,11 +72,19 @@ decide_expression:
     ;
 
 type:
-    TYPE_INT | TYPE_BOOL | TYPE_TEXT
-    ;
+    TYPE_INT  { $$ = 1; }
+  | TYPE_BOOL { $$ = 2; }
+  | TYPE_TEXT { $$ = 3; }
+  ;
 
 expression:
-    expression '+' term      { $$ = create_binop_node('+', $1, $3); }
+    expression EQ term       { $$ = create_binop_node('=', $1, $3); }
+    | expression NEQ term    { $$ = create_binop_node('!', $1, $3); }
+    | expression LTE term    { $$ = create_binop_node('l', $1, $3); }
+    | expression GTE term    { $$ = create_binop_node('g', $1, $3); }
+    | expression LT term     { $$ = create_binop_node('<', $1, $3); }
+    | expression GT term     { $$ = create_binop_node('>', $1, $3); }
+    | expression '+' term    { $$ = create_binop_node('+', $1, $3); }
     | expression '-' term    { $$ = create_binop_node('-', $1, $3); }
     | expression CONCAT term { $$ = create_binop_node('+', $1, $3); }
     | term                   { $$ = $1; }
@@ -94,7 +101,10 @@ factor:
     NUMBER      { $$ = create_literal_node($1); }
     | STRING    { $$ = create_string_node($1); }
     | ID        { $$ = create_variable_node($1); }
-    | BOOLEAN   { $$ = create_string_node($1); }
+    | BOOLEAN   {
+        int val = (strcmp($1, "yes") == 0) ? 1 : 0;
+        $$ = create_literal_node(val);
+    }
     | '(' expression ')' { $$ = $2; }
     ;
 

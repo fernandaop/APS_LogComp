@@ -1,8 +1,2 @@
-let nome: text := "Fernanda";
-show("Bem-vinda, " ++ nome);
-
-let pontos: int := 15;
-watch pontos;
-
-let status: int := decide(pontos >= 10, 1, 0);
-yield status;
+let a: int := 5;
+show(a);

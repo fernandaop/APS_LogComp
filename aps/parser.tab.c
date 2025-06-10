@@ -115,9 +115,9 @@ enum yysymbol_kind_t
   YYSYMBOL_STRING = 4,                     /* STRING  */
   YYSYMBOL_BOOLEAN = 5,                    /* BOOLEAN  */
   YYSYMBOL_NUMBER = 6,                     /* NUMBER  */
-  YYSYMBOL_TYPE_INT = 7,                   /* TYPE_INT  */
-  YYSYMBOL_TYPE_BOOL = 8,                  /* TYPE_BOOL  */
-  YYSYMBOL_TYPE_TEXT = 9,                  /* TYPE_TEXT  */
+  YYSYMBOL_TOKEN_INT = 7,                  /* TOKEN_INT  */
+  YYSYMBOL_TOKEN_BOOL = 8,                 /* TOKEN_BOOL  */
+  YYSYMBOL_TOKEN_TEXT = 9,                 /* TOKEN_TEXT  */
   YYSYMBOL_LET = 10,                       /* LET  */
   YYSYMBOL_LOOP = 11,                      /* LOOP  */
   YYSYMBOL_IN = 12,                        /* IN  */
@@ -548,10 +548,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    34,    34,    38,    39,    43,    44,    48,    49,    53,
-      54,    55,    56,    57,    58,    59,    63,    69,    75,    76,
-      77,    81,    82,    83,    84,    85,    86,    87,    88,    89,
-      90,    94,    95,    96,    97,   101,   102,   103,   104,   108
+       0,    35,    35,    39,    40,    44,    45,    49,    50,    54,
+      55,    56,    57,    58,    59,    60,    64,    70,    76,    77,
+      78,    82,    83,    84,    85,    86,    87,    88,    89,    90,
+      91,    95,    96,    97,    98,   102,   103,   104,   105,   109
 };
 #endif
 
@@ -568,8 +568,8 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "ID", "STRING",
-  "BOOLEAN", "NUMBER", "TYPE_INT", "TYPE_BOOL", "TYPE_TEXT", "LET", "LOOP",
-  "IN", "RANGE", "SHOW", "WATCH", "DECIDE", "YIELD", "SECTION",
+  "BOOLEAN", "NUMBER", "TOKEN_INT", "TOKEN_BOOL", "TOKEN_TEXT", "LET",
+  "LOOP", "IN", "RANGE", "SHOW", "WATCH", "DECIDE", "YIELD", "SECTION",
   "ASSIGN_INIT", "ASSIGN", "CONCAT", "EQ", "NEQ", "LT", "LTE", "GT", "GTE",
   "DIV_INT", "':'", "';'", "'('", "')'", "','", "'{'", "'}'", "'+'", "'-'",
   "'*'", "'/'", "$accept", "program", "blocks", "block", "statements",
@@ -1195,91 +1195,91 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: blocks  */
-#line 34 "parser.y"
+#line 35 "parser.y"
            { root = (yyvsp[0].node); }
 #line 1201 "parser.tab.c"
     break;
 
   case 3: /* blocks: block  */
-#line 38 "parser.y"
+#line 39 "parser.y"
                        { (yyval.node) = (yyvsp[0].node); }
 #line 1207 "parser.tab.c"
     break;
 
   case 4: /* blocks: blocks block  */
-#line 39 "parser.y"
+#line 40 "parser.y"
                        { (yyval.node) = append_statement((yyvsp[-1].node), (yyvsp[0].node)); }
 #line 1213 "parser.tab.c"
     break;
 
   case 5: /* block: SECTION ID ':' statements  */
-#line 43 "parser.y"
+#line 44 "parser.y"
                               { (yyval.node) = (yyvsp[0].node); }
 #line 1219 "parser.tab.c"
     break;
 
   case 6: /* block: statements  */
-#line 44 "parser.y"
+#line 45 "parser.y"
                               { (yyval.node) = (yyvsp[0].node); }
 #line 1225 "parser.tab.c"
     break;
 
   case 7: /* statements: statement  */
-#line 48 "parser.y"
+#line 49 "parser.y"
                             { (yyval.node) = (yyvsp[0].node); }
 #line 1231 "parser.tab.c"
     break;
 
   case 8: /* statements: statements statement  */
-#line 49 "parser.y"
+#line 50 "parser.y"
                             { (yyval.node) = append_statement((yyvsp[-1].node), (yyvsp[0].node)); }
 #line 1237 "parser.tab.c"
     break;
 
   case 9: /* statement: LET ID ':' type ASSIGN_INIT expression ';'  */
-#line 53 "parser.y"
+#line 54 "parser.y"
                                                { (yyval.node) = create_let_node((yyvsp[-5].str), (yyvsp[-3].num), (yyvsp[-1].node)); }
 #line 1243 "parser.tab.c"
     break;
 
   case 10: /* statement: ID ASSIGN expression ';'  */
-#line 54 "parser.y"
+#line 55 "parser.y"
                                                { (yyval.node) = create_assign_node((yyvsp[-3].str), (yyvsp[-1].node)); }
 #line 1249 "parser.tab.c"
     break;
 
   case 11: /* statement: SHOW '(' expression ')' ';'  */
-#line 55 "parser.y"
+#line 56 "parser.y"
                                                { (yyval.node) = create_show_node((yyvsp[-2].node)); }
 #line 1255 "parser.tab.c"
     break;
 
   case 12: /* statement: WATCH ID ';'  */
-#line 56 "parser.y"
+#line 57 "parser.y"
                                                { (yyval.node) = create_watch_node((yyvsp[-1].str)); }
 #line 1261 "parser.tab.c"
     break;
 
   case 13: /* statement: YIELD expression ';'  */
-#line 57 "parser.y"
+#line 58 "parser.y"
                                                { (yyval.node) = create_yield_node((yyvsp[-1].node)); }
 #line 1267 "parser.tab.c"
     break;
 
   case 14: /* statement: loop_statement  */
-#line 58 "parser.y"
+#line 59 "parser.y"
                                                { (yyval.node) = (yyvsp[0].node); }
 #line 1273 "parser.tab.c"
     break;
 
   case 15: /* statement: decide_expression ';'  */
-#line 59 "parser.y"
+#line 60 "parser.y"
                                                { (yyval.node) = (yyvsp[-1].node); }
 #line 1279 "parser.tab.c"
     break;
 
   case 16: /* loop_statement: LOOP ID IN RANGE '(' expression ',' expression ')' '{' statements '}'  */
-#line 63 "parser.y"
+#line 64 "parser.y"
                                                                           {
         (yyval.node) = create_loop_node((yyvsp[-10].str), (yyvsp[-6].node), (yyvsp[-4].node), (yyvsp[-1].node));
     }
@@ -1287,135 +1287,135 @@ yyreduce:
     break;
 
   case 17: /* decide_expression: DECIDE '(' expression ',' expression ',' expression ')'  */
-#line 69 "parser.y"
+#line 70 "parser.y"
                                                             {
         (yyval.node) = create_decide_node((yyvsp[-5].node), (yyvsp[-3].node), (yyvsp[-1].node));
     }
 #line 1295 "parser.tab.c"
     break;
 
-  case 18: /* type: TYPE_INT  */
-#line 75 "parser.y"
-              { (yyval.num) = 1; }
+  case 18: /* type: TOKEN_INT  */
+#line 76 "parser.y"
+               { (yyval.num) = TYPE_INT; }
 #line 1301 "parser.tab.c"
     break;
 
-  case 19: /* type: TYPE_BOOL  */
-#line 76 "parser.y"
-              { (yyval.num) = 2; }
+  case 19: /* type: TOKEN_BOOL  */
+#line 77 "parser.y"
+               { (yyval.num) = TYPE_BOOL; }
 #line 1307 "parser.tab.c"
     break;
 
-  case 20: /* type: TYPE_TEXT  */
-#line 77 "parser.y"
-              { (yyval.num) = 3; }
+  case 20: /* type: TOKEN_TEXT  */
+#line 78 "parser.y"
+               { (yyval.num) = TYPE_TEXT; }
 #line 1313 "parser.tab.c"
     break;
 
   case 21: /* expression: expression EQ term  */
-#line 81 "parser.y"
+#line 82 "parser.y"
                              { (yyval.node) = create_binop_node('=', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1319 "parser.tab.c"
     break;
 
   case 22: /* expression: expression NEQ term  */
-#line 82 "parser.y"
+#line 83 "parser.y"
                              { (yyval.node) = create_binop_node('!', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1325 "parser.tab.c"
     break;
 
   case 23: /* expression: expression LTE term  */
-#line 83 "parser.y"
+#line 84 "parser.y"
                              { (yyval.node) = create_binop_node('l', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1331 "parser.tab.c"
     break;
 
   case 24: /* expression: expression GTE term  */
-#line 84 "parser.y"
+#line 85 "parser.y"
                              { (yyval.node) = create_binop_node('g', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1337 "parser.tab.c"
     break;
 
   case 25: /* expression: expression LT term  */
-#line 85 "parser.y"
+#line 86 "parser.y"
                              { (yyval.node) = create_binop_node('<', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1343 "parser.tab.c"
     break;
 
   case 26: /* expression: expression GT term  */
-#line 86 "parser.y"
+#line 87 "parser.y"
                              { (yyval.node) = create_binop_node('>', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1349 "parser.tab.c"
     break;
 
   case 27: /* expression: expression '+' term  */
-#line 87 "parser.y"
+#line 88 "parser.y"
                              { (yyval.node) = create_binop_node('+', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1355 "parser.tab.c"
     break;
 
   case 28: /* expression: expression '-' term  */
-#line 88 "parser.y"
+#line 89 "parser.y"
                              { (yyval.node) = create_binop_node('-', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1361 "parser.tab.c"
     break;
 
   case 29: /* expression: expression CONCAT term  */
-#line 89 "parser.y"
+#line 90 "parser.y"
                              { (yyval.node) = create_binop_node('+', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1367 "parser.tab.c"
     break;
 
   case 30: /* expression: term  */
-#line 90 "parser.y"
+#line 91 "parser.y"
                              { (yyval.node) = (yyvsp[0].node); }
 #line 1373 "parser.tab.c"
     break;
 
   case 31: /* term: term '*' factor  */
-#line 94 "parser.y"
+#line 95 "parser.y"
                           { (yyval.node) = create_binop_node('*', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1379 "parser.tab.c"
     break;
 
   case 32: /* term: term '/' factor  */
-#line 95 "parser.y"
+#line 96 "parser.y"
                           { (yyval.node) = create_binop_node('/', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1385 "parser.tab.c"
     break;
 
   case 33: /* term: term DIV_INT factor  */
-#line 96 "parser.y"
+#line 97 "parser.y"
                           { (yyval.node) = create_binop_node('/', (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1391 "parser.tab.c"
     break;
 
   case 34: /* term: factor  */
-#line 97 "parser.y"
+#line 98 "parser.y"
                           { (yyval.node) = (yyvsp[0].node); }
 #line 1397 "parser.tab.c"
     break;
 
   case 35: /* factor: NUMBER  */
-#line 101 "parser.y"
+#line 102 "parser.y"
                 { (yyval.node) = create_literal_node((yyvsp[0].num)); }
 #line 1403 "parser.tab.c"
     break;
 
   case 36: /* factor: STRING  */
-#line 102 "parser.y"
+#line 103 "parser.y"
                 { (yyval.node) = create_string_node((yyvsp[0].str)); }
 #line 1409 "parser.tab.c"
     break;
 
   case 37: /* factor: ID  */
-#line 103 "parser.y"
+#line 104 "parser.y"
                 { (yyval.node) = create_variable_node((yyvsp[0].str)); }
 #line 1415 "parser.tab.c"
     break;
 
   case 38: /* factor: BOOLEAN  */
-#line 104 "parser.y"
+#line 105 "parser.y"
                 {
         int val = (strcmp((yyvsp[0].str), "yes") == 0) ? 1 : 0;
         (yyval.node) = create_literal_node(val);
@@ -1424,7 +1424,7 @@ yyreduce:
     break;
 
   case 39: /* factor: '(' expression ')'  */
-#line 108 "parser.y"
+#line 109 "parser.y"
                          { (yyval.node) = (yyvsp[-1].node); }
 #line 1430 "parser.tab.c"
     break;
@@ -1623,7 +1623,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 111 "parser.y"
+#line 112 "parser.y"
 
 
 void yyerror(const char *s) {

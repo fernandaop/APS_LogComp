@@ -18,7 +18,8 @@ Node* root;
 }
 
 %token <str> ID STRING BOOLEAN
-%token <num> NUMBER TYPE_INT TYPE_BOOL TYPE_TEXT
+%token <num> NUMBER
+%token TOKEN_INT TOKEN_BOOL TOKEN_TEXT
 %token LET LOOP IN RANGE SHOW WATCH DECIDE YIELD SECTION
 %token ASSIGN_INIT ASSIGN CONCAT
 %token EQ NEQ LT LTE GT GTE DIV_INT
@@ -72,9 +73,9 @@ decide_expression:
     ;
 
 type:
-    TYPE_INT  { $$ = 1; }
-  | TYPE_BOOL { $$ = 2; }
-  | TYPE_TEXT { $$ = 3; }
+    TOKEN_INT  { $$ = TYPE_INT; }
+  | TOKEN_BOOL { $$ = TYPE_BOOL; }
+  | TOKEN_TEXT { $$ = TYPE_TEXT; }
   ;
 
 expression:

@@ -14,9 +14,9 @@
 "decide"        { return DECIDE; }
 "yield"         { return YIELD; }
 "section"       { return SECTION; }
-"int"           { return TYPE_INT; }
-"bool"          { return TYPE_BOOL; }
-"text"          { return TYPE_TEXT; }
+"int"    { return TOKEN_INT; }
+"bool"   { return TOKEN_BOOL; }
+"text"   { return TOKEN_TEXT; }
 "yes"|"no"      { yylval.str = strdup(yytext); return BOOLEAN; }
 ":="            { return ASSIGN_INIT; }
 "<-"            { return ASSIGN; }
@@ -40,9 +40,14 @@
 ","             { return ','; }
 ";"             { return ';'; }
 \"([^\\\"]|\\.)*\" {
-    yylval.str = strdup(yytext);
+    int len = strlen(yytext);
+    char* unquoted = malloc(len - 1);  // len - 2 + 1 para \0
+    strncpy(unquoted, yytext + 1, len - 2);
+    unquoted[len - 2] = '\0';
+    yylval.str = unquoted;
     return STRING;
 }
+
 [0-9]+ {
     yylval.num = atoi(yytext);
     return NUMBER;

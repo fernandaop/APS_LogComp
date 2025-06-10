@@ -1,2 +1,5 @@
-let a: int := 5;
-show(a);
+let nome: text := "Fernanda";
+let pontos: int := 12;
+let status: int := decide(pontos >= 10, 1, 0);
+show("Olá, " ++ nome ++ "! Seus pontos: " ++ pontos);
+watch status;

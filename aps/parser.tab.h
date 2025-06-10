@@ -58,9 +58,9 @@ extern int yydebug;
     STRING = 259,                  /* STRING  */
     BOOLEAN = 260,                 /* BOOLEAN  */
     NUMBER = 261,                  /* NUMBER  */
-    TYPE_INT = 262,                /* TYPE_INT  */
-    TYPE_BOOL = 263,               /* TYPE_BOOL  */
-    TYPE_TEXT = 264,               /* TYPE_TEXT  */
+    TOKEN_INT = 262,               /* TOKEN_INT  */
+    TOKEN_BOOL = 263,              /* TOKEN_BOOL  */
+    TOKEN_TEXT = 264,              /* TOKEN_TEXT  */
     LET = 265,                     /* LET  */
     LOOP = 266,                    /* LOOP  */
     IN = 267,                      /* IN  */

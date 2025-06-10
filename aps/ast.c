@@ -21,10 +21,11 @@ Node* create_string_node(char* str) {
 
 Node* create_variable_node(char* id) {
     Node* n = calloc(1, sizeof(Node));
-    n->type = NODE_LITERAL;
+    n->type = NODE_VAR;
     n->id = strdup(id);
     return n;
 }
+
 
 Node* create_let_node(char* id, int var_type, Node* expr) {
     Node* n = calloc(1, sizeof(Node));
@@ -109,49 +110,114 @@ int eval_expr(Node* expr) {
             if (expr->id) 
                 return get_variable(expr->id);
             return expr->int_val;
+
+        case NODE_VAR:
+            if (variable_exists(expr->id)) {
+                VarType t = get_variable_type(expr->id);
+                if (t == TYPE_TEXT) {
+                    const char* val = get_variable_str(expr->id);
+                    if (val) {
+                        expr->str_val = strdup(val);
+                        return 0;
+                    }
+                } else {
+                    return get_variable(expr->id);
+                }
+            }
+            return 0;
+
             case NODE_BINOP: {
+                eval_expr(expr->left);
+                eval_expr(expr->right);
+
+                // Verifica se é uma operação de concatenação
+                if (expr->int_val == '+') {
+                    char lbuf[64] = "", rbuf[64] = "";
+
+                    const char* l = expr->left->str_val;
+                    const char* r = expr->right->str_val;
+
+                    if (!l && expr->left->type == NODE_VAR) {
+                        VarType lt = get_variable_type(expr->left->id);
+                        if (lt == TYPE_INT)
+                            sprintf(lbuf, "%d", get_variable(expr->left->id));
+                        l = lbuf;
+                    } else if (!l) {
+                        sprintf(lbuf, "%d", eval_expr(expr->left));
+                        l = lbuf;
+                    }
+
+                    if (!r && expr->right->type == NODE_VAR) {
+                        VarType rt = get_variable_type(expr->right->id);
+                        if (rt == TYPE_INT)
+                            sprintf(rbuf, "%d", get_variable(expr->right->id));
+                        r = rbuf;
+                    } else if (!r) {
+                        sprintf(rbuf, "%d", eval_expr(expr->right));
+                        r = rbuf;
+                    }
+
+                    if (expr->str_val) free(expr->str_val);
+                    expr->str_val = malloc(strlen(l) + strlen(r) + 1);
+                    strcpy(expr->str_val, l);
+                    strcat(expr->str_val, r);
+
+                    return 0;
+                }
+
+                // Operações matemáticas
                 int left = eval_expr(expr->left);
                 int right = eval_expr(expr->right);
                 switch (expr->int_val) {
-                    case '+': return left + right;
                     case '-': return left - right;
                     case '*': return left * right;
                     case '/': return right != 0 ? left / right : 0;
-                    case '=': return left == right;
-                    case '!': return left != right;
-                    case '<': return left < right;
-                    case '>': return left > right;
-                    case 'l': return left <= right;
-                    case 'g': return left >= right;
-                    default: return 0;
+                    default: return left + right;
                 }
             }
+
 
         case NODE_DECIDE: {
             int cond = eval_expr(expr->cond);
             return cond ? eval_expr(expr->true_expr) : eval_expr(expr->false_expr);
         }
+
         default:
             return 0;
     }
 }
 
+
 void eval(Node* root) {
     if (!root) return;
     switch (root->type) {
-        case NODE_LET:
+        case NODE_LET: {
+            if (root->var_type == TYPE_TEXT) {
+                eval_expr(root->left);  // força gerar str_val
+                set_variable_str(root->id, root->left->str_val);
+            } else {
+                int val = eval_expr(root->left);
+                set_variable(root->id, val);
+            }
+            break;
+        }
         case NODE_ASSIGN: {
-            int val = eval_expr(root->left);
-            set_variable(root->id, val);
+            VarType t = get_variable_type(root->id);
+            if (t == TYPE_TEXT) {
+                eval_expr(root->left);
+                set_variable_str(root->id, root->left->str_val);
+            } else {
+                int val = eval_expr(root->left);
+                set_variable(root->id, val);
+            }
             break;
         }
         case NODE_SHOW: {
+            eval_expr(root->left);
             if (root->left->str_val)
                 printf("%s\n", root->left->str_val);
-            else {
-                int val = eval_expr(root->left);
-                printf("%d\n", val);
-            }
+            else
+                printf("%d\n", eval_expr(root->left));
             break;
         }
         case NODE_WATCH: {

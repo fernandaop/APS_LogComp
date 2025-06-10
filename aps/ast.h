@@ -4,6 +4,7 @@
 typedef enum {
     NODE_PROGRAM,
     NODE_BLOCK,
+    NODE_VAR,
     NODE_LET,
     NODE_ASSIGN,
     NODE_SHOW,

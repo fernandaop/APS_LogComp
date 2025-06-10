@@ -19,10 +19,10 @@ Node* root;
 
 %token <str> ID STRING BOOLEAN
 %token <num> NUMBER
+%token <num> EQ NEQ LT LTE GT GTE DIV_INT
 %token TOKEN_INT TOKEN_BOOL TOKEN_TEXT
 %token LET LOOP IN RANGE SHOW WATCH DECIDE YIELD SECTION
 %token ASSIGN_INIT ASSIGN CONCAT
-%token EQ NEQ LT LTE GT GTE DIV_INT
 
 %type <node> program blocks block statements statement expression term factor decide_expression loop_statement
 %type <num> type
@@ -89,6 +89,7 @@ expression:
     | expression '-' term    { $$ = create_binop_node('-', $1, $3); }
     | expression CONCAT term { $$ = create_binop_node('+', $1, $3); }
     | term                   { $$ = $1; }
+    | decide_expression        { $$ = $1; }
     ;
 
 term:
